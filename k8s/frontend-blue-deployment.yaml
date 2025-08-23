@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-blue
+  namespace: bluegreen
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: frontend
+      color: blue
+  template:
+    metadata:
+      labels:
+        app: frontend
+        color: blue
+    spec:
+      containers:
+        - name: frontend
+          image: bluegreen-frontend-blue:1.0
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3100
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3100
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3100
+            initialDelaySeconds: 15
+            periodSeconds: 20
